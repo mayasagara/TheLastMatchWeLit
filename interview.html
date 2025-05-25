@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Interview</title>
+    <style>
+      @font-face {
+          font-family: 'JT Percy Regular';
+          src: url('assets/fonts/jt_percy_regular-webfont.woff') format('woff');
+          font-weight: normal;
+          font-style: normal;
+      }
+
+      @font-face {
+          font-family: 'JT Percy Italic';
+          src: url('assets/fonts/jt_percy_regular_italic-webfont.woff') format('woff');
+          font-weight: normal;
+          font-style: italic;
+      }
+
+      body {
+          background-color: rgb(0, 0, 0);
+          color: rgb(255, 255, 255);
+          position: relative;
+          overflow: auto;
+          min-height: 200vh;
+          min-width: 200vw;
+      }
+
+      .corner-title {
+          font-family: 'JT Percy Regular', 'Times New Roman', Times, serif;
+          font-size: 40px !important;
+          color: white;
+          font-weight: normal;
+          background: none !important;
+      }
+
+      .corner-title a {
+          font-family: 'JT Percy Regular', 'Times New Roman', Times, serif;
+          font-size: 40px !important;
+          color: white;
+          text-decoration: none;
+          font-weight: normal;
+          background: none !important;
+      }
+
+      .author-title {
+          font-size: 24px !important;
+      }
+
+      .top-left {
+          position: fixed;
+          top: 15px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: none !important;
+      }
+
+      .top-right {
+          position: fixed;
+          top: 40px;
+          right: 40px;
+          z-index: 10;
+          background: none !important;
+      }
+
+      .svg-container {
+          width: 120vw;
+          height: 80vh;
+          position: fixed;
+          left: 50vw;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          transition: all 0.3s ease;
+          cursor: pointer;
+          opacity: 0;
+          pointer-events: none;
+          width: 60vw;
+          height: 60vh;
+      }
+
+      .svg-container.show-interview {
+          opacity: 1;
+          pointer-events: auto;
+      }
+
+      .title-text {
+          font-family: 'JT Percy', 'Times New Roman', Times, serif;
+          font-size: 24px;
+          text-align: center;
+          padding: 20px;
+          transition: color 0.3s ease;
+          cursor: pointer;
+          color: white;
+      }
+
+      .title-text:hover {
+          color: red;
+      }
+
+      .scrollable-text {
+          height: 60vh;
+          width: 90vw;
+          padding: 80px 60px 120px 60px;
+          position: absolute;
+          left: 50%;
+          top: 60%;
+          transform: translate(-50%, -50%);
+          color: white;
+          overflow-y: auto;
+          line-height: 1.2;
+          background-color: black;
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+      }
+
+      .scrollable-text p {
+          font-family: 'JT Percy', 'Times New Roman', Times, serif;
+          font-size: 24px;
+          line-height: 1.2;
+          margin-bottom: 1.8em;
+          text-align: left;
+          text-justify: none;
+          hyphens: manual;
+          -webkit-hyphens: manual;
+          -ms-hyphens: manual;
+          letter-spacing: 0.06em;
+          word-spacing: 0.0em;
+          max-width: 100%;
+      }
+
+      .person-1 {
+          color: rgb(255, 255, 255);
+          font-weight: 400;
+          font-family: 'JT Percy Regular', 'Times New Roman', Times, serif;
+          font-style: normal;
+          padding-left: 34em;
+          padding-right: 5em;
+          margin-bottom: 1.5em;
+          position: relative;
+      }
+
+      .person-1::before {
+          content: "Sofija";
+          position: absolute;
+          right: -2em;
+          top: 0.4em;
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          font-family: 'JT Percy Regular', 'Times New Roman', Times, serif;
+          font-style: normal;
+          font-size: 24px;
+          letter-spacing: 0.1em;
+      }
+
+      .person-2 {
+          color: rgb(255, 255, 255);
+          font-style: italic;
+          font-weight: 400;
+          font-family: 'JT Percy Italic', 'Times New Roman', Times, serif;
+          padding-left: 9em;
+          padding-right: 34em;
+          margin-bottom: 1.5em;
+          position: relative;
+      }
+
+      .person-2::before {
+          content: "Maya";
+          position: absolute;
+          left: -2em;
+          top: 0.4em;
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          font-family: 'JT Percy Regular', 'Times New Roman', Times, serif;
+          font-style: normal;
+          font-size: 24px;
+          letter-spacing: 0.1em;
+      }
+
+      .person-2 p {
+          word-spacing: 3em !important;
+          letter-spacing: normal !important;
+      }
+
+      .scrollable-text::-webkit-scrollbar {
+          width: 0;
+          display: none;
+      }
+
+      .scrollable-text::-webkit-scrollbar-track {
+          background: transparent;
+      }
+
+      .scrollable-text::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 3px;
+      }
+
+      .scrollable-text::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
+      }
+
+      .small-matchbox {
+          width: 15vw;
+          height: 15vh;
+          position: fixed;
+          left: 75vw;
+          top: 65vh;
+          transform: translate(-50%, -50%);
+          z-index: 2;
+          cursor: pointer;
+          filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+          animation: matchGlow 2s ease-in-out infinite;
+          transition: opacity 0.3s ease;
+      }
+
+      .small-matchbox:focus {
+          outline: none;
+          opacity: 0;
+          pointer-events: none;
+      }
+
+      .small-matchbox:focus ~ .svg-container {
+          opacity: 1;
+          pointer-events: auto;
+      }
+
+      .small-matchbox:focus ~ .svg-container .matchbox-front {
+          opacity: 0;
+          pointer-events: none;
+      }
+
+      .small-matchbox:focus ~ .svg-container .matchbox-back {
+          opacity: 1;
+          pointer-events: auto;
+      }
+
+      .small-matchbox:focus ~ .bottle {
+          opacity: 0;
+          pointer-events: none;
+      }
+
+      .small-matchbox svg {
+          width: 100%;
+          height: 100%;
+      }
+
+      .small-matchbox svg g {
+          stroke: white;
+          transition: stroke 0.3s ease;
+      }
+
+      .small-matchbox:hover svg g {
+          stroke: red !important;
+      }
+
+      .small-matchbox svg rect {
+          fill: black;
+          stroke: white;
+          transition: stroke 0.3s ease;
+      }
+
+      .small-matchbox:hover svg rect {
+          stroke: red !important;
+      }
+      .match-svg {
+            position: fixed;
+            top: 52%;
+            left: 49.6%;
+            transform: translate(-50%, -50%);
+            width: 47px;
+            height: auto;
+            z-index: 2;
+            filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            animation: matchGlow 2s ease-in-out infinite;
+        }
+
+      .bottle {
+          width: 20vw;
+          height: 30vh;
+          position: fixed;
+          left: 25vw;
+          top: 56vh;
+          transform: translate(-50%, -50%);
+          z-index: 2;
+          filter: brightness(0) invert(1) drop-shadow(0 0 7px rgba(255, 255, 255, 0.6));
+          animation: bottleGlow 2s ease-in-out infinite;
+          transition: opacity 0.3s ease;
+          cursor: pointer;
+      }
+
+      .bottle:focus {
+          outline: none;
+          opacity: 0;
+          pointer-events: none;
+      }
+
+      .bottle:focus ~ .formula-container {
+          opacity: 1;
+          pointer-events: auto;
+      }
+
+      .formula-container {
+          width: 120vw;
+          height: 80vh;
+          position: fixed;
+          left: 50vw;
+          top: 53.5%;
+          transform: translate(-50%, -50%);
+          transition: all 0.3s ease;
+          cursor: pointer;
+          opacity: 0;
+          pointer-events: none;
+          width: 60vw;
+          height: 60vh;
+      }
+
+      .formula-text {
+          height: 60vh;
+          width: 90vw;
+          padding: 80px 60px 120px 60px;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+          overflow-y: auto;
+          line-height: 1.2;
+          background-color: transparent;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+
+      .formula-text p {
+          font-family: 'JT Percy', 'Times New Roman', Times, serif;
+          font-size: 24px;
+          line-height: 0.3;
+          margin-bottom: 0.3em;
+          text-align: left;
+          text-justify: none;
+          hyphens: manual;
+          -webkit-hyphens: manual;
+          -ms-hyphens: manual;
+          letter-spacing: 0.06em;
+          word-spacing: 0.0em;
+          max-width: 100%;
+      }
+
+      .formula-text p:first-child,
+      .formula-text p:nth-child(5),
+      .formula-text p:nth-child(9) {
+          margin-bottom: 0.8em;
+      }
+
+      .bottle iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+      }
+
+      .bottle iframe path,
+      .bottle iframe rect,
+      .bottle iframe circle,
+      .bottle iframe line,
+      .bottle iframe polyline,
+      .bottle iframe polygon {
+          stroke: white !important;
+          stroke-width: 7 !important;
+      }
+
+      .bottle.hide {
+          opacity: 0;
+          pointer-events: none;
+      }
+
+      @keyframes matchGlow {
+          0% {
+              filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+          }
+          50% {
+              filter: brightness(0) invert(1) drop-shadow(0 0 18px rgba(255, 255, 255, 0.8));
+          }
+          100% {
+              filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+          }
+      }
+
+      @keyframes bottleGlow {
+          0% {
+              filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+          }
+          50% {
+              filter: brightness(0) invert(1) drop-shadow(0 0 18px rgba(255, 255, 255, 0.8));
+          }
+          100% {
+              filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+              filter: brightness(0) invert(1) drop-shadow(0 0 7px rgba(255, 255, 255, 0.6));
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html"><img src="assets/Asset 14.svg" alt="Match" class="match-svg"></a>
+    <h1 class="corner-title top-left"><a href="index.html">Interview</a></h1>
+    <h1 class="corner-title top-right author-title">Sofija Golo & Maya Sagara Curé</h1>
+
+    <div class="small-matchbox" tabindex="0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 119.53 35.72">
+        <g style="fill: none; stroke: white; stroke-width: 4;">
+          <rect x=".5" y="10.98" width="95.26" height="24.24"/>
+          <polyline points="95.76 10.98 119.03 .5 119.03 21.79 95.76 35.22"/>
+          <polyline points="119.03 .5 20.66 .5 .5 10.98"/>
+        </g>
+        <rect x=".5" y="19.31" width="95.26" height="7.12" fill="#231f20" stroke="white" stroke-width="4"/>
+      </svg>
+    </div>
+
+    <div class="bottle" tabindex="0">
+      <img src="assets/Asset 13.svg" alt="Bottle" style="width: 100%; height: 100%;">
+    </div>
+
+    <div class="formula-container">
+      <div class="formula-text">
+        <p style="font-size: 32px; margin-bottom: 2em; text-align: left; padding-top: 0; font-style: italic;">Match Made in Heaven</p>
+        <p>Base note formula:</p>
+        <p style="padding-left: 2em;">Apo patchone</p>
+        <p style="padding-left: 2em;">Vanilla</p>
+        <p style="padding-left: 2em;">Musk</p>
+        <p style="margin-bottom: 2em;"></p>
+        <p>Middle note formula:</p>
+        <p style="padding-left: 2em;">Iris</p>
+        <p style="padding-left: 2em;">Rose</p>
+        <p style="padding-left: 2em;">Jasmin </p>
+        <p style="margin-bottom: 2em;"></p>
+        <p>Formula:</p>
+        <p style="padding-left: 2em;">Neroli (floral and citrus)</p>
+        <p style="padding-left: 2em;">Guayacol (wood fire and processed leather)</p>
+        <p style="padding-left: 2em;">Ceder (woody scent with an undertone of citrus)</p>
+      </div>
+    </div>
+
+    <div class="svg-container">
+      <div class="scrollable-text">
+        <p class="person-1">Thanks for having me.</p> 
+        <p class="person-2">Of course, thanks for coming. I'm currently working on a project about matches and they carry different symbolics and meanings. Maybe you could first say something about your relation to smell and your studies? </p> 
+        <p class="person-1">My name is Sophia. I'm 23 years old and I'm currently finishing my master's in psychology and back in December of 2024, I took a 10-week course about smell at the University of Amsterdam where I learned how to make perfumes, the history of perfumes and all the associations about it. But even before that,  I always really enjoyed smelling things since I was a young girl. I also did an internship which focused on the effects of smell on our stress levels because smell, even commercial perfumes, can have an effect on our brain and our cognition. And then I did a survey experiment with three different perfumes and I  looked at people's responses to them. Even though it was about our emotions, every single person always said that they thought of a memory or a person. Then I realised that there's such a strong link between smell and memory, I think it is really interesting to explore academically..</p> 
+        <p class="person-2"> And you had a course during which you had the opportunity to work on replicating a scent?  </p> 
+        <p class="person-1">Yes. Well, our professor told us that we had to make a perfume so that we can practise how to blend the perfume and how to create something based on these chemicals and our memory. He wanted us to be as specific as possible. So think of something that you enjoy. It can be also a negative, like a nasty smell. It's just about the memory. I started paying more attention to my daily things. Then I realised when I came home and I was lighting my candles and did like the little "shwook", that the initial smell of lighting the match smells so good. It smells a little bit woody but you can only smell it for a split second before it evaporates. I wanted to replicate that very short smell in order to experience it for a longer time because I like it so much. 
+          That was my inspiration behind it. I think I called "match made in heaven" or something like that. it was a lot of experimenting, I made three different perfumes and I used a lot of sorts of cigar, wood and paper scents. Then, the professor told me "you need to elaborate the story more. Where is this matchbox? Where in the house?" and then I said "well, it's in my grandmother's makeup cabinet.","So what does that smell like?" "It's dusty, it's old, it's powdery." So you can incorporate all of those things. And that's what I did. </p> 
+        <p class="person-2"> Do you remember exactly the ingredients you used? </p> 
+        <p class="person-1"> You have for instance lavender or rose which we call accords. So if you have a rose accord, it means that this perfume smells like roses, but it's made of multiple other things to smell like a rose. So you can have different accords. And then there were also some other components like patchouli, that was literally just patchouli that was made into perfume. And you take a drop and put it in your 80% alcohol filled bottle. You put like 10 to 12 drops in total. </p> 
+        <p class="person-2"> But were these scents replicas of the scent or were they essences?</p> 
+        <p class="person-1">  He said it was made by tinkering. That's the process to extract the smell from a plant for instance, you then use heat to trigger the evaporation. So that was like not a replica, it was genuinely the smell. .</p> 
+        <p class="person-2"> Did you smell all the different scents and tried to link it to your memory or did he also guide you?</p> 
+        <p class="person-1"> Oh yeah, he did categorise that we should have a base note, middle note, top note. For example, there are certain base notes for example, vanilla which is really strong. It's something that you will always smell when you spray a perfume. It's not going to evaporate very quickly. So if you want to put vanilla in and if you want it to act like a base note, in order to still smell it after 15 minutes, then you can put two to three drops. If you just want a hint of it, you put one drop. So we had to categorise what smells we wanted to last a little long, what smells we wanted to smell immediately and what smells we wanted as the middle notes. My top notes replicate the flash of this woody smell when you light the match. I picked up the top notes that like resembled those, but I don't remember what I used. Maybe I have formulas somewhere, I can have a look and send them to you. And then the base notes were all really leathery and cigar like because they smelled like dust. I then thought, after you have that fire, the ignition, that's the residue, the ash. So that's where I put the base notes. </p> 
+        <p class="person-2">And once you had like this replica of the match smell, did you feel like it fitted what you had in mind? </p> 
+        <p class="person-1">The first time, no. The first time it was really sweet. I put a lot of vanilla and it smelled more of a perfume and not like a memory. So then he said "you have to take it away, just because you like the smell personally doesn't mean you have to add it." You have to really separate what your own liking is, which was hard because when you say perfume, you think of something you want to wear and not something that represents a space. But after the second trial, then I got better at it and then I was really happy with it. But I think it smelled more like the match box rather than the match. The process of lighting the match actually. </p> 
+        <p class="person-2"> But do you have specific memories linked to that smell? </p> 
+        <p class="person-1">Well, I really love the smell of burning wood, because in Serbia, when you're taking a walk in the forest there's always somebody burning some wood in their garden or somewhere in the forest. It's a really strong smell and it just smells so beautifully in nature. I've always loved the smell of fire. In the Netherlands, I don't smell it so often, but I guess I found that smell when I was lighting my match, a little version of it. So I wanted to embrace that, because it's really hard to replicate a smell if you don't smell it in front of you. </p> 
+        <p class="person-2">And the PhD you're will be shortly doing is also around this topic?</p> 
+        <p class="person-1">It's going to be about mental imagery, so the pictures in our head and smell. For example those researchers discovered that the mental imagery part is actually linked with anorexia. The whole theme of mental imagery or the whole phenomenon is that not everybody can imagine their senses. So if I ask you to close your eyes and picture a polar bear or picture what your bed looks like right now, and you're able to do it, then you have the ability to have mental imagery. But when you ask people to do it with smell, it's a lot different. Our sense of smell is the least prioritised sense modality that we have. When you ask people "which sense would you not mind losing?" they answer smell. Because of COVID, there's been so much more academic research into loss of smell. And now we're actually going to be the first ones to look into mental imagery and smell. Why do some people not imagine smell? Can smell be exercised or not? What are the societal implications of smell? Can we use it to help people who are overweight, to entice them to not eat the sweet foods, but to eat foods that are better for them nutrition wise. That's what they're looking at, as they believe it is the future. If I were to create another perfume based off a memory, I would really want to create a perfume of what my dog's feet smelled like. It smelled like little popcorn. </p> 
+        <p class="person-2"> What? </p>
+        <p class="person-1">Yes. When he was under a blanket and it was really warm, it just smelled like caramel popcorn. My dog passed away this year. But even though I don't smell those little popcorn feet anymore, the memory is so strong in my head. I don't need to smell it. I know that I could replicate it. That's also because smell is the only sense that has actually a direct pathway to the brain. And the pathway where it lands in the brain is the memory place. That's why when you smell something, it's always going to shoot up there. </p> 
+        <p class="person-2"> But do you think that smell could also be used for exposure therapy?</p>
+        <p class="person-1">Yes. Definitely. The thing with exposure therapy is that it's really efficient when you build up the exposure. When somebody has maybe a fear of eating strawberries, then they show pictures, then they show them strawberry jam, blah, blah, blah. But with smell, I think it could be really complicated. I think it would be really interesting, but it's hard to break down a scent. Unless you were in a smell lab, and then you could really show them.  Do you have like a like an example in your head or just in general? </p> 
+        <p class="person-2">  No, just in general. I was just thinking about it because I watched this interview with this one guy who started his own perfume house and also talked about AI in the perfume industry. Now there's these machines where you can literally just put a drop of a perfume and the machine will directly tell you all the components. So it's extremely easy to replicate scents.</p>
+        <p class="person-1">Exactly. They're already so good at it now, but it's only going to get better. They also have a sniffing nose, an electronic nose that you can bring with you and it will sniff what's around for you. Frank Bloom is the name of the person that taught me the perfume class. And he told me about it, you can search up electronic nose and how it's used. He also says there's so many advancements with technology but you can tell the quality difference. </p> 
+        <p class="person-2"> Usually the dupes are made with watered down components. </p>
+        <p class="person-1">Yeah, yeah, yeah. The smell will go away. But maybe it will become a real thing. It's really possible.</p> 
+      </div>
+    </div>
+  </body>
+</html>

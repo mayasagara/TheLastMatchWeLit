@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The last match we lit</title>
+    <style>
+        @font-face {
+            font-family: 'JT Percy Regular';
+            src: url('assets/fonts/jt_percy_regular-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'JT Percy Regular Italic';
+            src: url('assets/fonts/jt_percy_regular_italic-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: rgb(0, 0, 0);
+            color: rgb(255, 255, 255);
+            transition: all 0.2s ease;
+            min-height: 100vh;
+            font-family: 'JT Percy Regular Italic', 'Times New Roman', Times, serif;
+        }
+
+        body.inverted {
+            background-color: white;
+            color: black;
+        }
+
+        body.inverted .match-stick,
+        body.inverted .match-head,
+        body.inverted .flame {
+            stroke: rgb(0, 0, 0);
+        }
+
+        body.inverted .match-head {
+            fill: rgb(255, 255, 255);
+        }
+
+        .svg-container_2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            background-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .flame {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            stroke: rgb(255, 255, 255);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .match {
+            position: relative;
+            width: 50px;
+            height: auto;
+            filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+            animation: matchGlow 2s ease-in-out infinite;
+            transition: all 0.3s ease;
+            transform-origin: center top;
+        }
+
+        .match:hover {
+            filter: brightness(0) invert(1) drop-shadow(0 0 20px rgba(255, 255, 255, 1));
+        }
+
+        .match-stick {
+            stroke: rgb(255, 255, 255);
+            stroke-width: 3;
+            transition: stroke 0.2s ease;
+        }
+
+        .match-head {
+            stroke: rgb(255, 255, 255);
+            stroke-width: 3;
+            fill: rgb(0, 0, 0);
+            transition: all 0.2s ease;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .scrolling-text {
+            position: fixed;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 23px 0;
+            font-family: 'JT Percy Regular Italic', 'Times New Roman', Times, serif;
+            font-size: 24px;
+            line-height: 1.6;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            letter-spacing: 0.05em;
+        }
+
+        .scrolling-text.top {
+            top: 0;
+            border-top: 0px solid rgb(255, 255, 255);
+        }
+
+        .scrolling-text.bottom {
+            bottom: 0;
+            border-top: 0px solid rgb(255, 255, 255);
+        }
+
+        .scrolling-text marquee {
+            display: inline-block;
+            padding: 0 20px;
+        }
+
+        body.inverted .scrolling-text {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: black;
+        }
+
+        body.inverted .scrolling-text.top {
+            border-bottom: 2px solid black;
+        }
+
+        body.inverted .scrolling-text.bottom {
+            border-top: 2px solid black;
+        }
+
+        .title {
+            position: fixed;
+            top: 30px;
+            left: 70px;
+            font-size: 30px;
+            font-family: 'JT Percy Regular Italic';
+            font-style: italic;
+            color: rgb(255, 255, 255);
+            transition: color 0.2s ease;
+            z-index: 100;
+        }
+
+        body.inverted .title {
+            color: black;
+        }
+
+        .match-text {
+            font-family: 'JT Percy Regular Italic', 'Times New Roman', Times, serif;
+            fill: rgb(255, 255, 255);
+            transition: all 0.3s ease;
+            opacity: 0;
+            font-weight: bold;
+        }
+
+        .match:hover .match-text {
+            opacity: 1;
+        }
+
+        body.inverted .match-text {
+            fill: rgb(0, 0, 0);
+        }
+
+        .corner-title {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: fit-content;
+            font-family: 'JT Percy Regular Italic', 'Times New Roman', Times, serif;
+            text-transform: lowercase;
+            color: white;
+            font-size: 24px;
+            background: none;
+        }
+
+        body.inverted .corner-title {
+            color: black;
+            background-color: rgb(255, 255, 255);
+        }
+
+        .top-left {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+        }
+
+        .top-right {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        .match-text {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            filter: blur(2px);
+        }
+
+        .match:hover .match-text {
+            opacity: 0.8;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                filter: blur(8px);
+            }
+            to {
+                opacity: 0.8;
+                filter: blur(2px);
+            }
+        }
+
+        .match-svg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: auto;
+            z-index: 9999;
+            pointer-events: none;
+            filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            animation: matchGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes matchGlow {
+            0% {
+                filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+            }
+            50% {
+                filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(255, 255, 255, 0.9));
+            }
+            100% {
+                filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+            }
+        }
+
+        .match-title {
+            font-family: 'JT Percy Regular Italic', 'Times New Roman', Times, serif;
+            fill: rgb(255, 255, 255);
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            letter-spacing: 0.01em;
+            text-anchor: middle;
+            white-space: nowrap;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .match:hover .match-title {
+            opacity: 1;
+            animation: flicker 0.6s infinite ease-in-out;
+        }
+
+        .title-text {
+            font-family: 'JT Percy Regular Italic', 'Times New Roman', Times, serif;
+            font-size: 48px;
+            text-align: center;
+            padding: 20px;
+            transition: color 0.3s ease;
+            cursor: none;
+            color: white;
+        }
+
+        @keyframes flicker {
+            0% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 30px rgba(255, 255, 255, 0.7); opacity: 0.9; }
+            25% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.6); opacity: 0.8; }
+            50% { text-shadow: 0 0 25px rgba(255, 255, 255, 0.95), 0 0 35px rgba(255, 255, 255, 0.75); opacity: 0.95; }
+            75% { text-shadow: 0 0 18px rgba(255, 255, 255, 0.85), 0 0 28px rgba(255, 255, 255, 0.65); opacity: 0.85; }
+            100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 30px rgba(255, 255, 255, 0.7); opacity: 0.9; }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title"> </h1>
+
+    <div class="svg-container_2">
+        <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid meet">
+            <!-- First Match -->
+            <a href="interview.html">
+                <g class="match">
+                    <path id="curve1" d="M 300,179 A 45,45 0 0,1 390,179" fill="none" stroke="none"/>
+                    <text class="match-title">
+                        <textPath href="#curve1" startOffset="50%">a fragrance</textPath>
+                    </text>
+                    <image href="assets/Asset 14.svg" x="300" y="180" width="90" height="270"/>
+                </g>
+            </a>
+            
+            <!-- Second Match -->
+            <a href="matchgirlcopy3.html">
+                <g class="match">
+                    <path id="curve2" d="M 550,179 A 45,45 0 0,1 640,179" fill="none" stroke="none"/>
+                    <text class="match-title">
+                        <textPath href="#curve2" startOffset="50%">a dream</textPath>
+                    </text>
+                    <image href="assets/Asset 14.svg" x="550" y="180" width="90" height="270"/>
+                </g>
+            </a>
+            
+            <!-- Third Match -->
+            <a href="archive4.html">
+                <g class="match">
+                    <path id="curve3" d="M 800,179 A 45,45 0 0,1 890,179" fill="none" stroke="none"/>
+                    <text class="match-title">
+                        <textPath href="#curve3" startOffset="50%">a collective memory</textPath>
+                    </text>
+                    <image href="assets/Asset 14.svg" x="800" y="180" width="90" height="270"/>
+                </g>
+            </a>
+        </svg>
+    </div>
+
+    <div class="scrolling-text bottom">
+        <marquee scrollamount="3">
+            "But when from a long-distant past nothing subsists, after the people are dead, after the things are broken and scattered, still, alone, more fragile, but with more vitality, more unsubstantial, more persistent, more faithful, the smell and taste of things remain poised a long time, like souls, ready to remind us, waiting and hoping for their moment, amid the ruins of all the rest; and bear unfaltering, in the tiny and almost impalpable drop of their essence, the vast structure of recollection." —Marcel Proust, Swann's Way (Du côté de chez Swann)
+        </marquee>
+    </div>
+
+    <div style="position: fixed; top: 60px; left: 50%; transform: translateX(-50%); font-family: 'JT Percy Regular', 'Times New Roman', Times, serif; color: white; font-size: 40px; background: none;">
+        The Last Match We Lit Sparked...
+    </div>
+</body>
+</html>

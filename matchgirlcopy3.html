@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Little Match Girl</title>
+    <style>
+        @font-face {
+            font-family: 'JT Percy';
+            src: url('assets/fonts/jt_percy_regular_italic-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background-color: #000;
+            color: #fff;
+            font-family: 'JT Percy', serif;
+            overflow-y: auto;
+            padding-bottom: 4em;
+        }
+
+        .title-container {
+            width: 100%;
+            background: #000000;
+            padding: 40px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            box-shadow: none;
+        }
+
+        .title {
+            font-size: 40px;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            font-weight: normal;
+        }
+
+        .author {
+            position: fixed;
+            top: 50px;
+            right: 2em;
+            font-size: 1.5em;
+            margin: 0;
+            font-style: italic;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+            z-index: 4;
+        }
+
+        .text-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2em;
+            box-sizing: border-box;
+            overflow-y: visible;
+            margin-top: 8em;
+        }
+
+        .text-box {
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            overflow-y: visible;
+            padding: 20px 60px;
+            background: rgba(0, 0, 0, 0.9);
+            line-height: 1.4;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .text-box::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari, Opera */
+        }
+
+       
+        @keyframes fadeIn {
+            0% { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .paragraph {
+            font-size: 24px;
+            margin-bottom: 3em;
+            opacity: 1;
+            transform: none;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            view-timeline-name: paragraph;
+            view-timeline-axis: block;
+            text-align: left;
+            word-wrap: break-word;
+            white-space: normal;
+            orphans: 2;
+            widows: 2;
+            letter-spacing: 0.03em;
+        }
+
+        .story-section:nth-child(-n+3) .paragraph {
+            margin-bottom: 3em;
+        }
+
+      
+        .story-section:nth-child(1) {
+            margin-bottom: 3em;
+        }
+
+        .story-section:nth-child(2) {
+            margin-top: 0;
+        }
+
+        .word {
+            display: inline-block;
+            margin-right: 1px;
+            opacity: 0;
+            transform: none;
+            transition: all 0.25s ease;
+            animation: fadeIn 0.75s forwards, 
+                      wordFade 2.5s forwards;
+            animation-delay: 0s, 
+                           calc(var(--word-index) * 0.08s + var(--paragraph-index) * 7s + 3s);
+            will-change: transform, opacity;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+                        0 0 20px rgba(255, 255, 255, 0.2),
+                        0 0 30px rgba(255, 255, 255, 0.1);
+            position: relative;
+            white-space: normal;
+        }
+
+        .word:hover {
+            animation: fadeAway 1.2s forwards;
+        }
+
+        .word.scroll-fade {
+            animation: scrollFadeOut 1.8s forwards;
+        }
+
+        @keyframes scrollFade {
+            0% {
+                opacity: 1;
+                transform: translateY(0) translateX(0) rotate(0deg);
+                filter: blur(0px);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-10px) translateX(5px) rotate(1deg);
+                filter: blur(1.5px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) translateX(15px) rotate(2deg);
+                filter: blur(3px);
+            }
+        }
+
+        @keyframes fadeAway {
+            0% {
+                opacity: 1;
+                transform: translateY(0) translateX(0) rotate(0deg);
+                filter: blur(0px);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-10px) translateX(5px) rotate(1deg);
+                filter: blur(1.5px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) translateX(15px) rotate(2deg);
+                filter: blur(3px);
+            }
+        }
+
+        @keyframes scrollFadeOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0) translateX(0) rotate(0deg);
+                filter: blur(0px);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-10px) translateX(5px) rotate(1deg);
+                filter: blur(1.5px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) translateX(15px) rotate(2deg);
+                filter: blur(3px);
+            }
+        }
+
+        @keyframes wordFade {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+                            0 0 20px rgba(255, 255, 255, 0.2),
+                            0 0 30px rgba(255, 255, 255, 0.1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px);
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.1),
+                            0 0 40px rgba(255, 255, 255, 0.05),
+                            0 0 60px rgba(255, 255, 255, 0);
+            }
+        }
+
+        .match-svg {
+            position: fixed;
+            top: 52%;
+            left: 49.6%;
+            transform: translate(-50%, -50%);
+            width: 47px;
+            height: auto;
+            z-index: 2;
+            filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            animation: matchGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes matchGlow {
+            0% {
+                filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            }
+            50% {
+                filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+            }
+            100% {
+                filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            }
+        }
+
+        .story-section:nth-child(4) .paragraph {
+            margin-bottom: 3em;
+        }
+
+        .story-section:nth-child(4) .paragraph span {
+            display: inline;
+            margin-right: 0.3em;
+        }
+    </style>
+</head>
+<body>
+    <div class="title-container">
+        <h1 class="title">The Little Match Girl</h1>
+    </div>
+    <p class="author">by Hans Christian Andersen</p>
+    <a href="index.html">
+        <img src="assets/Asset 14.svg" alt="Match" class="match-svg">
+    </a>
+    <div class="text-container">
+        <div class="text-box" id="textBox">
+            <div class="story-section" style="--section-index: 0">
+                <p class="paragraph" style="--paragraph-index: 0">
+                    <span class="word" style="--word-index: 0; --paragraph-index: 0">It</span>
+                    <span class="word" style="--word-index: 1; --paragraph-index: 0">was</span>
+                    <span class="word" style="--word-index: 2; --paragraph-index: 0">so</span>
+                    <span class="word" style="--word-index: 3; --paragraph-index: 0">terribly</span>
+                    <span class="word" style="--word-index: 4; --paragraph-index: 0">cold.</span>
+                    <span class="word" style="--word-index: 5; --paragraph-index: 0">Snow</span>
+                    <span class="word" style="--word-index: 6; --paragraph-index: 0">was</span>
+                    <span class="word" style="--word-index: 7; --paragraph-index: 0">falling,</span>
+                    <span class="word" style="--word-index: 8; --paragraph-index: 0">and</span>
+                    <span class="word" style="--word-index: 9; --paragraph-index: 0">it</span>
+                    <span class="word" style="--word-index: 10; --paragraph-index: 0">was</span>
+                    <span class="word" style="--word-index: 11; --paragraph-index: 0">almost</span>
+                    <span class="word" style="--word-index: 12; --paragraph-index: 0">dark.</span>
+                    <span class="word" style="--word-index: 13; --paragraph-index: 0">Evening</span>
+                    <span class="word" style="--word-index: 14; --paragraph-index: 0">came</span>
+                    <span class="word" style="--word-index: 15; --paragraph-index: 0">on,</span>
+                    <span class="word" style="--word-index: 16; --paragraph-index: 0">the</span>
+                    <span class="word" style="--word-index: 17; --paragraph-index: 0">last</span>
+                    <span class="word" style="--word-index: 18; --paragraph-index: 0">evening</span>
+                    <span class="word" style="--word-index: 19; --paragraph-index: 0">of</span>
+                    <span class="word" style="--word-index: 20; --paragraph-index: 0">the</span>
+                    <span class="word" style="--word-index: 21; --paragraph-index: 0">year.</span>
+                    <span class="word" style="--word-index: 22; --paragraph-index: 0">In</span>
+                    <span class="word" style="--word-index: 23; --paragraph-index: 0">the</span>
+                    <span class="word" style="--word-index: 24; --paragraph-index: 0">cold</span>
+                    <span class="word" style="--word-index: 25; --paragraph-index: 0">and</span>
+                    <span class="word" style="--word-index: 26; --paragraph-index: 0">gloom</span>
+                    <span class="word" style="--word-index: 27; --paragraph-index: 0">a</span>
+                    <span class="word" style="--word-index: 28; --paragraph-index: 0">poor</span>
+                    <span class="word" style="--word-index: 29; --paragraph-index: 0">little</span>
+                    <span class="word" style="--word-index: 30; --paragraph-index: 0">girl,</span>
+                    <span class="word" style="--word-index: 31; --paragraph-index: 0">bareheaded</span>
+                    <span class="word" style="--word-index: 32; --paragraph-index: 0">and</span>
+                    <span class="word" style="--word-index: 33; --paragraph-index: 0">barefoot,</span>
+                    <span class="word" style="--word-index: 34; --paragraph-index: 0">was</span>
+                    <span class="word" style="--word-index: 35; --paragraph-index: 0">walking</span>
+                    <span class="word" style="--word-index: 36; --paragraph-index: 0">through</span>
+                    <span class="word" style="--word-index: 37; --paragraph-index: 0">the</span>
+                    <span class="word" style="--word-index: 38; --paragraph-index: 0">streets.</span>
+                    <span class="word" style="--word-index: 39; --paragraph-index: 0">Of</span>
+                    <span class="word" style="--word-index: 40; --paragraph-index: 0">course</span>
+                    <span class="word" style="--word-index: 41; --paragraph-index: 0">when</span>
+                    <span class="word" style="--word-index: 42; --paragraph-index: 0">she</span>
+                    <span class="word" style="--word-index: 43; --paragraph-index: 0">had</span>
+                    <span class="word" style="--word-index: 44; --paragraph-index: 0">left</span>
+                    <span class="word" style="--word-index: 45; --paragraph-index: 0">her</span>
+                    <span class="word" style="--word-index: 46; --paragraph-index: 0">house</span>
+                    <span class="word" style="--word-index: 47; --paragraph-index: 0">she'd</span>
+                    <span class="word" style="--word-index: 48; --paragraph-index: 0">had</span>
+                    <span class="word" style="--word-index: 49; --paragraph-index: 0">slippers</span>
+                    <span class="word" style="--word-index: 50; --paragraph-index: 0">on,</span>
+                    <span class="word" style="--word-index: 51; --paragraph-index: 0">but</span>
+                    <span class="word" style="--word-index: 52; --paragraph-index: 0">what</span>
+                    <span class="word" style="--word-index: 53; --paragraph-index: 0">good</span>
+                    <span class="word" style="--word-index: 54; --paragraph-index: 0">had</span>
+                    <span class="word" style="--word-index: 55; --paragraph-index: 0">they</span>
+                    <span class="word" style="--word-index: 56; --paragraph-index: 0">been?</span>
+                    <span class="word" style="--word-index: 57; --paragraph-index: 0">They</span>
+                    <span class="word" style="--word-index: 58; --paragraph-index: 0">were</span>
+                    <span class="word" style="--word-index: 59; --paragraph-index: 0">very</span>
+                    <span class="word" style="--word-index: 60; --paragraph-index: 0">big</span>
+                    <span class="word" style="--word-index: 61; --paragraph-index: 0">slippers,</span>
+                    <span class="word" style="--word-index: 62; --paragraph-index: 0">way</span>
+                    <span class="word" style="--word-index: 63; --paragraph-index: 0">too</span>
+                    <span class="word" style="--word-index: 64; --paragraph-index: 0">big</span>
+                    <span class="word" style="--word-index: 65; --paragraph-index: 0">for</span>
+                    <span class="word" style="--word-index: 66; --paragraph-index: 0">her,</span>
+                    <span class="word" style="--word-index: 67; --paragraph-index: 0">for</span>
+                    <span class="word" style="--word-index: 68; --paragraph-index: 0">they</span>
+                    <span class="word" style="--word-index: 69; --paragraph-index: 0">belonged</span>
+                    <span class="word" style="--word-index: 70; --paragraph-index: 0">to</span>
+                    <span class="word" style="--word-index: 71; --paragraph-index: 0">her</span>
+                    <span class="word" style="--word-index: 72; --paragraph-index: 0">mother.</span>
+                    <span class="word" style="--word-index: 73; --paragraph-index: 0">The</span>
+                    <span class="word" style="--word-index: 74; --paragraph-index: 0">little</span>
+                    <span class="word" style="--word-index: 75; --paragraph-index: 0">girl</span>
+                    <span class="word" style="--word-index: 76; --paragraph-index: 0">had</span>
+                    <span class="word" style="--word-index: 77; --paragraph-index: 0">lost</span>
+                    <span class="word" style="--word-index: 78; --paragraph-index: 0">them</span>
+                    <span class="word" style="--word-index: 79; --paragraph-index: 0">running</span>
+                    <span class="word" style="--word-index: 80; --paragraph-index: 0">across</span>
+                    <span class="word" style="--word-index: 81; --paragraph-index: 0">the</span>
+                    <span class="word" style="--word-index: 82; --paragraph-index: 0">road,</span>
+                    <span class="word" style="--word-index: 83; --paragraph-index: 0">where</span>
+                    <span class="word" style="--word-index: 84; --paragraph-index: 0">two</span>
+                    <span class="word" style="--word-index: 85; --paragraph-index: 0">carriages</span>
+                    <span class="word" style="--word-index: 86; --paragraph-index: 0">had</span>
+                    <span class="word" style="--word-index: 87; --paragraph-index: 0">rattled</span>
+                    <span class="word" style="--word-index: 88; --paragraph-index: 0">by</span>
+                    <span class="word" style="--word-index: 89; --paragraph-index: 0">terribly</span>
+                    <span class="word" style="--word-index: 90; --paragraph-index: 0">fast.</span>
+                </p>
+            </div>
+
+            <div class="story-section" style="--section-index: 1">
+                <p class="paragraph" style="--paragraph-index: 1">
+                    <span class="word" style="--word-index: 0; --paragraph-index: 1">One</span>
+                    <span class="word" style="--word-index: 1; --paragraph-index: 1">slipper</span>
+                    <span class="word" style="--word-index: 2; --paragraph-index: 1">she'd</span>
+                    <span class="word" style="--word-index: 3; --paragraph-index: 1">not</span>
+                    <span class="word" style="--word-index: 4; --paragraph-index: 1">been</span>
+                    <span class="word" style="--word-index: 5; --paragraph-index: 1">able</span>
+                    <span class="word" style="--word-index: 6; --paragraph-index: 1">to</span>
+                    <span class="word" style="--word-index: 7; --paragraph-index: 1">find</span>
+                    <span class="word" style="--word-index: 8; --paragraph-index: 1">again,</span>
+                    <span class="word" style="--word-index: 9; --paragraph-index: 1">and</span>
+                    <span class="word" style="--word-index: 10; --paragraph-index: 1">a</span>
+                    <span class="word" style="--word-index: 11; --paragraph-index: 1">boy</span>
+                    <span class="word" style="--word-index: 12; --paragraph-index: 1">had</span>
+                    <span class="word" style="--word-index: 13; --paragraph-index: 1">run</span>
+                    <span class="word" style="--word-index: 14; --paragraph-index: 1">off</span>
+                    <span class="word" style="--word-index: 15; --paragraph-index: 1">with</span>
+                    <span class="word" style="--word-index: 16; --paragraph-index: 1">the</span>
+                    <span class="word" style="--word-index: 17; --paragraph-index: 1">other,</span>
+                    <span class="word" style="--word-index: 18; --paragraph-index: 1">saying</span>
+                    <span class="word" style="--word-index: 19; --paragraph-index: 1">he</span>
+                    <span class="word" style="--word-index: 20; --paragraph-index: 1">could</span>
+                    <span class="word" style="--word-index: 21; --paragraph-index: 1">use</span>
+                    <span class="word" style="--word-index: 22; --paragraph-index: 1">it</span>
+                    <span class="word" style="--word-index: 23; --paragraph-index: 1">very</span>
+                    <span class="word" style="--word-index: 24; --paragraph-index: 1">well</span>
+                    <span class="word" style="--word-index: 25; --paragraph-index: 1">as</span>
+                    <span class="word" style="--word-index: 26; --paragraph-index: 1">a</span>
+                    <span class="word" style="--word-index: 27; --paragraph-index: 1">cradle</span>
+                    <span class="word" style="--word-index: 28; --paragraph-index: 1">some</span>
+                    <span class="word" style="--word-index: 29; --paragraph-index: 1">day</span>
+                    <span class="word" style="--word-index: 30; --paragraph-index: 1">when</span>
+                    <span class="word" style="--word-index: 31; --paragraph-index: 1">he</span>
+                    <span class="word" style="--word-index: 32; --paragraph-index: 1">had</span>
+                    <span class="word" style="--word-index: 33; --paragraph-index: 1">children</span>
+                    <span class="word" style="--word-index: 34; --paragraph-index: 1">of</span>
+                    <span class="word" style="--word-index: 35; --paragraph-index: 1">his</span>
+                    <span class="word" style="--word-index: 36; --paragraph-index: 1">own.</span>
+                    <span class="word" style="--word-index: 37; --paragraph-index: 1">And</span>
+                    <span class="word" style="--word-index: 38; --paragraph-index: 1">so</span>
+                    <span class="word" style="--word-index: 39; --paragraph-index: 1">the</span>
+                    <span class="word" style="--word-index: 40; --paragraph-index: 1">little</span>
+                    <span class="word" style="--word-index: 41; --paragraph-index: 1">girl</span>
+                    <span class="word" style="--word-index: 42; --paragraph-index: 1">walked</span>
+                    <span class="word" style="--word-index: 43; --paragraph-index: 1">on</span>
+                    <span class="word" style="--word-index: 44; --paragraph-index: 1">her</span>
+                    <span class="word" style="--word-index: 45; --paragraph-index: 1">naked</span>
+                    <span class="word" style="--word-index: 46; --paragraph-index: 1">feet,</span>
+                    <span class="word" style="--word-index: 47; --paragraph-index: 1">which</span>
+                    <span class="word" style="--word-index: 48; --paragraph-index: 1">were</span>
+                    <span class="word" style="--word-index: 49; --paragraph-index: 1">quite</span>
+                    <span class="word" style="--word-index: 50; --paragraph-index: 1">red</span>
+                    <span class="word" style="--word-index: 51; --paragraph-index: 1">and</span>
+                    <span class="word" style="--word-index: 52; --paragraph-index: 1">blue</span>
+                    <span class="word" style="--word-index: 53; --paragraph-index: 1">with</span>
+                    <span class="word" style="--word-index: 54; --paragraph-index: 1">the</span>
+                    <span class="word" style="--word-index: 55; --paragraph-index: 1">cold.</span>
+                </p>
+            </div>
+
+            <div class="story-section" style="--section-index: 2">
+                <p class="paragraph" style="--paragraph-index: 2">
+                    <span class="word" style="--word-index: 0; --paragraph-index: 2">In</span>
+                    <span class="word" style="--word-index: 1; --paragraph-index: 2">an</span>
+                    <span class="word" style="--word-index: 2; --paragraph-index: 2">old</span>
+                    <span class="word" style="--word-index: 3; --paragraph-index: 2">apron</span>
+                    <span class="word" style="--word-index: 4; --paragraph-index: 2">she</span>
+                    <span class="word" style="--word-index: 5; --paragraph-index: 2">carried</span>
+                    <span class="word" style="--word-index: 6; --paragraph-index: 2">several</span>
+                    <span class="word" style="--word-index: 7; --paragraph-index: 2">packages</span>
+                    <span class="word" style="--word-index: 8; --paragraph-index: 2">of</span>
+                    <span class="word" style="--word-index: 9; --paragraph-index: 2">matches,</span>
+                    <span class="word" style="--word-index: 10; --paragraph-index: 2">and</span>
+                    <span class="word" style="--word-index: 11; --paragraph-index: 2">she</span>
+                    <span class="word" style="--word-index: 12; --paragraph-index: 2">held</span>
+                    <span class="word" style="--word-index: 13; --paragraph-index: 2">a</span>
+                    <span class="word" style="--word-index: 14; --paragraph-index: 2">box</span>
+                    <span class="word" style="--word-index: 15; --paragraph-index: 2">of</span>
+                    <span class="word" style="--word-index: 16; --paragraph-index: 2">them</span>
+                    <span class="word" style="--word-index: 17; --paragraph-index: 2">in</span>
+                    <span class="word" style="--word-index: 18; --paragraph-index: 2">her</span>
+                    <span class="word" style="--word-index: 19; --paragraph-index: 2">hand.</span>
+                    <span class="word" style="--word-index: 20; --paragraph-index: 2">No</span>
+                    <span class="word" style="--word-index: 21; --paragraph-index: 2">one</span>
+                    <span class="word" style="--word-index: 22; --paragraph-index: 2">had</span>
+                    <span class="word" style="--word-index: 23; --paragraph-index: 2">bought</span>
+                    <span class="word" style="--word-index: 24; --paragraph-index: 2">any</span>
+                    <span class="word" style="--word-index: 25; --paragraph-index: 2">from</span>
+                    <span class="word" style="--word-index: 26; --paragraph-index: 2">her</span>
+                    <span class="word" style="--word-index: 27; --paragraph-index: 2">all</span>
+                    <span class="word" style="--word-index: 28; --paragraph-index: 2">day</span>
+                    <span class="word" style="--word-index: 29; --paragraph-index: 2">long,</span>
+                    <span class="word" style="--word-index: 30; --paragraph-index: 2">and</span>
+                    <span class="word" style="--word-index: 31; --paragraph-index: 2">no</span>
+                    <span class="word" style="--word-index: 32; --paragraph-index: 2">one</span>
+                    <span class="word" style="--word-index: 33; --paragraph-index: 2">had</span>
+                    <span class="word" style="--word-index: 34; --paragraph-index: 2">given</span>
+                    <span class="word" style="--word-index: 35; --paragraph-index: 2">her</span>
+                    <span class="word" style="--word-index: 36; --paragraph-index: 2">a</span>
+                    <span class="word" style="--word-index: 37; --paragraph-index: 2">cent.</span>
+                    <span class="word" style="--word-index: 38; --paragraph-index: 2">She</span>
+                    <span class="word" style="--word-index: 39; --paragraph-index: 2">struck</span>
+                    <span class="word" style="--word-index: 40; --paragraph-index: 2">another</span>
+                    <span class="word" style="--word-index: 41; --paragraph-index: 2">match</span>
+                    <span class="word" style="--word-index: 42; --paragraph-index: 2">against</span>
+                    <span class="word" style="--word-index: 43; --paragraph-index: 2">the</span>
+                    <span class="word" style="--word-index: 44; --paragraph-index: 2">wall.</span>
+                    <span class="word" style="--word-index: 45; --paragraph-index: 2">It</span>
+                    <span class="word" style="--word-index: 46; --paragraph-index: 2">burned</span>
+                    <span class="word" style="--word-index: 47; --paragraph-index: 2">brightly,</span>
+                    <span class="word" style="--word-index: 48; --paragraph-index: 2">and</span>
+                    <span class="word" style="--word-index: 49; --paragraph-index: 2">when</span>
+                    <span class="word" style="--word-index: 50; --paragraph-index: 2">the</span>
+                    <span class="word" style="--word-index: 51; --paragraph-index: 2">light</span>
+                    <span class="word" style="--word-index: 52; --paragraph-index: 2">fell</span>
+                    <span class="word" style="--word-index: 53; --paragraph-index: 2">upon</span>
+                    <span class="word" style="--word-index: 54; --paragraph-index: 2">the</span>
+                    <span class="word" style="--word-index: 55; --paragraph-index: 2">wall</span>
+                    <span class="word" style="--word-index: 56; --paragraph-index: 2">it</span>
+                    <span class="word" style="--word-index: 57; --paragraph-index: 2">became</span>
+                    <span class="word" style="--word-index: 58; --paragraph-index: 2">transparent</span>
+                    <span class="word" style="--word-index: 59; --paragraph-index: 2">like</span>
+                    <span class="word" style="--word-index: 60; --paragraph-index: 2">a</span>
+                    <span class="word" style="--word-index: 61; --paragraph-index: 2">thin</span>
+                    <span class="word" style="--word-index: 62; --paragraph-index: 2">veil,</span>
+                    <span class="word" style="--word-index: 63; --paragraph-index: 2">and</span>
+                    <span class="word" style="--word-index: 64; --paragraph-index: 2">she</span>
+                    <span class="word" style="--word-index: 65; --paragraph-index: 2">could</span>
+                    <span class="word" style="--word-index: 66; --paragraph-index: 2">see</span>
+                    <span class="word" style="--word-index: 67; --paragraph-index: 2">through</span>
+                    <span class="word" style="--word-index: 68; --paragraph-index: 2">it</span>
+                    <span class="word" style="--word-index: 69; --paragraph-index: 2">into</span>
+                    <span class="word" style="--word-index: 70; --paragraph-index: 2">a</span>
+                    <span class="word" style="--word-index: 71; --paragraph-index: 2">room.</span>
+                    <span class="word" style="--word-index: 72; --paragraph-index: 2">She</span>
+                    <span class="word" style="--word-index: 73; --paragraph-index: 2">lighted</span>
+                    <span class="word" style="--word-index: 74; --paragraph-index: 2">another</span>
+                    <span class="word" style="--word-index: 75; --paragraph-index: 2">match.</span>
+                    <span class="word" style="--word-index: 76; --paragraph-index: 2">Then</span>
+                    <span class="word" style="--word-index: 77; --paragraph-index: 2">she</span>
+                    <span class="word" style="--word-index: 78; --paragraph-index: 2">was</span>
+                    <span class="word" style="--word-index: 79; --paragraph-index: 2">sitting</span>
+                    <span class="word" style="--word-index: 80; --paragraph-index: 2">under</span>
+                    <span class="word" style="--word-index: 81; --paragraph-index: 2">the</span>
+                    <span class="word" style="--word-index: 82; --paragraph-index: 2">most</span>
+                    <span class="word" style="--word-index: 83; --paragraph-index: 2">beautiful</span>
+                    <span class="word" style="--word-index: 84; --paragraph-index: 2">Christmas</span>
+                    <span class="word" style="--word-index: 85; --paragraph-index: 2">tree.</span>
+                    <span class="word" style="--word-index: 86; --paragraph-index: 2">She</span>
+                    <span class="word" style="--word-index: 87; --paragraph-index: 2">rubbed</span>
+                    <span class="word" style="--word-index: 88; --paragraph-index: 2">another</span>
+                    <span class="word" style="--word-index: 89; --paragraph-index: 2">match</span>
+                    <span class="word" style="--word-index: 90; --paragraph-index: 2">against</span>
+                    <span class="word" style="--word-index: 91; --paragraph-index: 2">the</span>
+                    <span class="word" style="--word-index: 92; --paragraph-index: 2">wall.</span>
+                    <span class="word" style="--word-index: 93; --paragraph-index: 2">It</span>
+                    <span class="word" style="--word-index: 94; --paragraph-index: 2">became</span>
+                    <span class="word" style="--word-index: 95; --paragraph-index: 2">bright</span>
+                    <span class="word" style="--word-index: 96; --paragraph-index: 2">again,</span>
+                    <span class="word" style="--word-index: 97; --paragraph-index: 2">and</span>
+                    <span class="word" style="--word-index: 98; --paragraph-index: 2">in</span>
+                    <span class="word" style="--word-index: 99; --paragraph-index: 2">the</span>
+                    <span class="word" style="--word-index: 100; --paragraph-index: 2">glow</span>
+                    <span class="word" style="--word-index: 101; --paragraph-index: 2">the</span>
+                    <span class="word" style="--word-index: 102; --paragraph-index: 2">old</span>
+                    <span class="word" style="--word-index: 103; --paragraph-index: 2">grandmother</span>
+                    <span class="word" style="--word-index: 104; --paragraph-index: 2">stood</span>
+                    <span class="word" style="--word-index: 105; --paragraph-index: 2">clear</span>
+                    <span class="word" style="--word-index: 106; --paragraph-index: 2">and</span>
+                    <span class="word" style="--word-index: 107; --paragraph-index: 2">shining,</span>
+                    <span class="word" style="--word-index: 108; --paragraph-index: 2">kind</span>
+                    <span class="word" style="--word-index: 109; --paragraph-index: 2">and</span>
+                    <span class="word" style="--word-index: 110; --paragraph-index: 2">lovely.</span>
+                </p>
+            </div>
+
+            <div class="story-section" style="--section-index: 3">
+                <p class="paragraph" style="--paragraph-index: 3">
+                    <span class="word" style="--word-index: 0; --paragraph-index: 3">She</span>
+                    <span class="word" style="--word-index: 1; --paragraph-index: 3">lighted</span>
+                    <span class="word" style="--word-index: 2; --paragraph-index: 3">another</span>
+                    <span class="word" style="--word-index: 3; --paragraph-index: 3">match.</span>
+                    <span class="word" style="--word-index: 4; --paragraph-index: 3">Then</span>
+                    <span class="word" style="--word-index: 5; --paragraph-index: 3">she</span>
+                    <span class="word" style="--word-index: 6; --paragraph-index: 3">was</span>
+                    <span class="word" style="--word-index: 7; --paragraph-index: 3">sitting</span>
+                    <span class="word" style="--word-index: 8; --paragraph-index: 3">under</span>
+                    <span class="word" style="--word-index: 9; --paragraph-index: 3">the</span>
+                    <span class="word" style="--word-index: 10; --paragraph-index: 3">most</span>
+                    <span class="word" style="--word-index: 11; --paragraph-index: 3">beautiful</span>
+                    <span class="word" style="--word-index: 12; --paragraph-index: 3">Christmas</span>
+                    <span class="word" style="--word-index: 13; --paragraph-index: 3">tree.</span>
+                    <span class="word" style="--word-index: 14; --paragraph-index: 3">She</span>
+                    <span class="word" style="--word-index: 15; --paragraph-index: 3">rubbed</span>
+                    <span class="word" style="--word-index: 16; --paragraph-index: 3">another</span>
+                    <span class="word" style="--word-index: 17; --paragraph-index: 3">match</span>
+                    <span class="word" style="--word-index: 18; --paragraph-index: 3">against</span>
+                    <span class="word" style="--word-index: 19; --paragraph-index: 3">the</span>
+                    <span class="word" style="--word-index: 20; --paragraph-index: 3">wall.</span>
+                    <span class="word" style="--word-index: 21; --paragraph-index: 3">It</span>
+                    <span class="word" style="--word-index: 22; --paragraph-index: 3">became</span>
+                    <span class="word" style="--word-index: 23; --paragraph-index: 3">bright</span>
+                    <span class="word" style="--word-index: 24; --paragraph-index: 3">again,</span>
+                    <span class="word" style="--word-index: 25; --paragraph-index: 3">and</span>
+                    <span class="word" style="--word-index: 26; --paragraph-index: 3">in</span>
+                    <span class="word" style="--word-index: 27; --paragraph-index: 3">the</span>
+                    <span class="word" style="--word-index: 28; --paragraph-index: 3">glow</span>
+                    <span class="word" style="--word-index: 29; --paragraph-index: 3">the</span>
+                    <span class="word" style="--word-index: 30; --paragraph-index: 3">old</span>
+                    <span class="word" style="--word-index: 31; --paragraph-index: 3">grandmother</span>
+                    <span class="word" style="--word-index: 32; --paragraph-index: 3">stood</span>
+                    <span class="word" style="--word-index: 33; --paragraph-index: 3">clear</span>
+                    <span class="word" style="--word-index: 34; --paragraph-index: 3">and</span>
+                    <span class="word" style="--word-index: 35; --paragraph-index: 3">shining,</span>
+                    <span class="word" style="--word-index: 36; --paragraph-index: 3">kind</span>
+                    <span class="word" style="--word-index: 37; --paragraph-index: 3">and</span>
+                    <span class="word" style="--word-index: 38; --paragraph-index: 3">lovely.</span>
+                </p>
+            </div>
+
+            <div class="story-section" style="--section-index: 4">
+                <p class="paragraph" style="--paragraph-index: 4">
+                    <span class="word" style="--word-index: 0; --paragraph-index: 4">"Grandmother!"</span>
+                    <span class="word" style="--word-index: 1; --paragraph-index: 4">cried</span>
+                    <span class="word" style="--word-index: 2; --paragraph-index: 4">the</span>
+                    <span class="word" style="--word-index: 3; --paragraph-index: 4">child.</span>
+                    <span class="word" style="--word-index: 4; --paragraph-index: 4">"Oh,</span>
+                    <span class="word" style="--word-index: 5; --paragraph-index: 4">take</span>
+                    <span class="word" style="--word-index: 6; --paragraph-index: 4">me</span>
+                    <span class="word" style="--word-index: 7; --paragraph-index: 4">with</span>
+                    <span class="word" style="--word-index: 8; --paragraph-index: 4">you!</span>
+                    <span class="word" style="--word-index: 9; --paragraph-index: 4">I</span>
+                    <span class="word" style="--word-index: 10; --paragraph-index: 4">know</span>
+                    <span class="word" style="--word-index: 11; --paragraph-index: 4">you</span>
+                    <span class="word" style="--word-index: 12; --paragraph-index: 4">will</span>
+                    <span class="word" style="--word-index: 13; --paragraph-index: 4">disappear</span>
+                    <span class="word" style="--word-index: 14; --paragraph-index: 4">when</span>
+                    <span class="word" style="--word-index: 15; --paragraph-index: 4">the</span>
+                    <span class="word" style="--word-index: 16; --paragraph-index: 4">match</span>
+                    <span class="word" style="--word-index: 17; --paragraph-index: 4">is</span>
+                    <span class="word" style="--word-index: 18; --paragraph-index: 4">burned</span>
+                    <span class="word" style="--word-index: 19; --paragraph-index: 4">out.</span>
+                    <span class="word" style="--word-index: 20; --paragraph-index: 4">You</span>
+                    <span class="word" style="--word-index: 21; --paragraph-index: 4">will</span>
+                    <span class="word" style="--word-index: 22; --paragraph-index: 4">vanish</span>
+                    <span class="word" style="--word-index: 23; --paragraph-index: 4">like</span>
+                    <span class="word" style="--word-index: 24; --paragraph-index: 4">the</span>
+                    <span class="word" style="--word-index: 25; --paragraph-index: 4">warm</span>
+                    <span class="word" style="--word-index: 26; --paragraph-index: 4">stove,</span>
+                    <span class="word" style="--word-index: 27; --paragraph-index: 4">the</span>
+                    <span class="word" style="--word-index: 28; --paragraph-index: 4">wonderful</span>
+                    <span class="word" style="--word-index: 29; --paragraph-index: 4">roast</span>
+                    <span class="word" style="--word-index: 30; --paragraph-index: 4">goose</span>
+                    <span class="word" style="--word-index: 31; --paragraph-index: 4">and</span>
+                    <span class="word" style="--word-index: 32; --paragraph-index: 4">the</span>
+                    <span class="word" style="--word-index: 33; --paragraph-index: 4">beautiful</span>
+                    <span class="word" style="--word-index: 34; --paragraph-index: 4">big</span>
+                    <span class="word" style="--word-index: 35; --paragraph-index: 4">Christmas</span>
+                    <span class="word" style="--word-index: 36; --paragraph-index: 4">tree!"</span>
+                    <span class="word" style="--word-index: 37; --paragraph-index: 4">And</span>
+                    <span class="word" style="--word-index: 38; --paragraph-index: 4">she</span>
+                    <span class="word" style="--word-index: 39; --paragraph-index: 4">quickly</span>
+                    <span class="word" style="--word-index: 40; --paragraph-index: 4">struck</span>
+                    <span class="word" style="--word-index: 41; --paragraph-index: 4">the</span>
+                    <span class="word" style="--word-index: 42; --paragraph-index: 4">whole</span>
+                    <span class="word" style="--word-index: 43; --paragraph-index: 4">bundle</span>
+                    <span class="word" style="--word-index: 44; --paragraph-index: 4">of</span>
+                    <span class="word" style="--word-index: 45; --paragraph-index: 4">matches,</span>
+                    <span class="word" style="--word-index: 46; --paragraph-index: 4">for</span>
+                    <span class="word" style="--word-index: 47; --paragraph-index: 4">she</span>
+                    <span class="word" style="--word-index: 48; --paragraph-index: 4">wished</span>
+                    <span class="word" style="--word-index: 49; --paragraph-index: 4">to</span>
+                    <span class="word" style="--word-index: 50; --paragraph-index: 4">keep</span>
+                    <span class="word" style="--word-index: 51; --paragraph-index: 4">her</span>
+                    <span class="word" style="--word-index: 52; --paragraph-index: 4">grandmother</span>
+                    <span class="word" style="--word-index: 53; --paragraph-index: 4">with</span>
+                    <span class="word" style="--word-index: 54; --paragraph-index: 4">her.</span>
+                </p>
+            </div>
+
+            <div class="story-section" style="--section-index: 5">
+                <p class="paragraph" style="--paragraph-index: 5">
+                    <span class="word" style="--word-index: 0; --paragraph-index: 5">And</span>
+                    <span class="word" style="--word-index: 1; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 2; --paragraph-index: 5">matches</span>
+                    <span class="word" style="--word-index: 3; --paragraph-index: 5">burned</span>
+                    <span class="word" style="--word-index: 4; --paragraph-index: 5">with</span>
+                    <span class="word" style="--word-index: 5; --paragraph-index: 5">such</span>
+                    <span class="word" style="--word-index: 6; --paragraph-index: 5">a</span>
+                    <span class="word" style="--word-index: 7; --paragraph-index: 5">glow</span>
+                    <span class="word" style="--word-index: 8; --paragraph-index: 5">that</span>
+                    <span class="word" style="--word-index: 9; --paragraph-index: 5">it</span>
+                    <span class="word" style="--word-index: 10; --paragraph-index: 5">became</span>
+                    <span class="word" style="--word-index: 11; --paragraph-index: 5">brighter</span>
+                    <span class="word" style="--word-index: 12; --paragraph-index: 5">than</span>
+                    <span class="word" style="--word-index: 13; --paragraph-index: 5">daylight.</span>
+                    <span class="word" style="--word-index: 14; --paragraph-index: 5">Grandmother</span>
+                    <span class="word" style="--word-index: 15; --paragraph-index: 5">had</span>
+                    <span class="word" style="--word-index: 16; --paragraph-index: 5">never</span>
+                    <span class="word" style="--word-index: 17; --paragraph-index: 5">been</span>
+                    <span class="word" style="--word-index: 18; --paragraph-index: 5">so</span>
+                    <span class="word" style="--word-index: 19; --paragraph-index: 5">grand</span>
+                    <span class="word" style="--word-index: 20; --paragraph-index: 5">and</span>
+                    <span class="word" style="--word-index: 21; --paragraph-index: 5">beautiful.</span>
+                    <span class="word" style="--word-index: 22; --paragraph-index: 5">She</span>
+                    <span class="word" style="--word-index: 23; --paragraph-index: 5">took</span>
+                    <span class="word" style="--word-index: 24; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 25; --paragraph-index: 5">little</span>
+                    <span class="word" style="--word-index: 26; --paragraph-index: 5">girl</span>
+                    <span class="word" style="--word-index: 27; --paragraph-index: 5">in</span>
+                    <span class="word" style="--word-index: 28; --paragraph-index: 5">her</span>
+                    <span class="word" style="--word-index: 29; --paragraph-index: 5">arms,</span>
+                    <span class="word" style="--word-index: 30; --paragraph-index: 5">and</span>
+                    <span class="word" style="--word-index: 31; --paragraph-index: 5">both</span>
+                    <span class="word" style="--word-index: 32; --paragraph-index: 5">of</span>
+                    <span class="word" style="--word-index: 33; --paragraph-index: 5">them</span>
+                    <span class="word" style="--word-index: 34; --paragraph-index: 5">flew</span>
+                    <span class="word" style="--word-index: 35; --paragraph-index: 5">in</span>
+                    <span class="word" style="--word-index: 36; --paragraph-index: 5">brightness</span>
+                    <span class="word" style="--word-index: 37; --paragraph-index: 5">and</span>
+                    <span class="word" style="--word-index: 38; --paragraph-index: 5">joy</span>
+                    <span class="word" style="--word-index: 39; --paragraph-index: 5">above</span>
+                    <span class="word" style="--word-index: 40; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 41; --paragraph-index: 5">earth,</span>
+                    <span class="word" style="--word-index: 42; --paragraph-index: 5">very,</span>
+                    <span class="word" style="--word-index: 43; --paragraph-index: 5">very</span>
+                    <span class="word" style="--word-index: 44; --paragraph-index: 5">high,</span>
+                    <span class="word" style="--word-index: 45; --paragraph-index: 5">and</span>
+                    <span class="word" style="--word-index: 46; --paragraph-index: 5">up</span>
+                    <span class="word" style="--word-index: 47; --paragraph-index: 5">there</span>
+                    <span class="word" style="--word-index: 48; --paragraph-index: 5">was</span>
+                    <span class="word" style="--word-index: 49; --paragraph-index: 5">neither</span>
+                    <span class="word" style="--word-index: 50; --paragraph-index: 5">cold,</span>
+                    <span class="word" style="--word-index: 51; --paragraph-index: 5">nor</span>
+                    <span class="word" style="--word-index: 52; --paragraph-index: 5">hunger,</span>
+                    <span class="word" style="--word-index: 53; --paragraph-index: 5">nor</span>
+                    <span class="word" style="--word-index: 54; --paragraph-index: 5">fear—</span>
+                    <span class="word" style="--word-index: 55; --paragraph-index: 5">they</span>
+                    <span class="word" style="--word-index: 56; --paragraph-index: 5">were</span>
+                    <span class="word" style="--word-index: 57; --paragraph-index: 5">with</span>
+                    <span class="word" style="--word-index: 58; --paragraph-index: 5">God.</span>
+                    <span class="word" style="--word-index: 59; --paragraph-index: 5">But</span>
+                    <span class="word" style="--word-index: 60; --paragraph-index: 5">in</span>
+                    <span class="word" style="--word-index: 61; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 62; --paragraph-index: 5">corner,</span>
+                    <span class="word" style="--word-index: 63; --paragraph-index: 5">leaning</span>
+                    <span class="word" style="--word-index: 64; --paragraph-index: 5">against</span>
+                    <span class="word" style="--word-index: 65; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 66; --paragraph-index: 5">wall,</span>
+                    <span class="word" style="--word-index: 67; --paragraph-index: 5">sat</span>
+                    <span class="word" style="--word-index: 68; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 69; --paragraph-index: 5">little</span>
+                    <span class="word" style="--word-index: 70; --paragraph-index: 5">girl</span>
+                    <span class="word" style="--word-index: 71; --paragraph-index: 5">with</span>
+                    <span class="word" style="--word-index: 72; --paragraph-index: 5">red</span>
+                    <span class="word" style="--word-index: 73; --paragraph-index: 5">cheeks</span>
+                    <span class="word" style="--word-index: 74; --paragraph-index: 5">and</span>
+                    <span class="word" style="--word-index: 75; --paragraph-index: 5">smiling</span>
+                    <span class="word" style="--word-index: 76; --paragraph-index: 5">mouth,</span>
+                    <span class="word" style="--word-index: 77; --paragraph-index: 5">frozen</span>
+                    <span class="word" style="--word-index: 78; --paragraph-index: 5">to</span>
+                    <span class="word" style="--word-index: 79; --paragraph-index: 5">death</span>
+                    <span class="word" style="--word-index: 80; --paragraph-index: 5">on</span>
+                    <span class="word" style="--word-index: 81; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 82; --paragraph-index: 5">last</span>
+                    <span class="word" style="--word-index: 83; --paragraph-index: 5">evening</span>
+                    <span class="word" style="--word-index: 84; --paragraph-index: 5">of</span>
+                    <span class="word" style="--word-index: 85; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 86; --paragraph-index: 5">old</span>
+                    <span class="word" style="--word-index: 87; --paragraph-index: 5">year.</span>
+                    <span class="word" style="--word-index: 88; --paragraph-index: 5">The</span>
+                    <span class="word" style="--word-index: 89; --paragraph-index: 5">New</span>
+                    <span class="word" style="--word-index: 90; --paragraph-index: 5">Year's</span>
+                    <span class="word" style="--word-index: 91; --paragraph-index: 5">sun</span>
+                    <span class="word" style="--word-index: 92; --paragraph-index: 5">rose</span>
+                    <span class="word" style="--word-index: 93; --paragraph-index: 5">upon</span>
+                    <span class="word" style="--word-index: 94; --paragraph-index: 5">a</span>
+                    <span class="word" style="--word-index: 95; --paragraph-index: 5">little</span>
+                    <span class="word" style="--word-index: 96; --paragraph-index: 5">pathetic</span>
+                    <span class="word" style="--word-index: 97; --paragraph-index: 5">figure.</span>
+                    <span class="word" style="--word-index: 98; --paragraph-index: 5">The</span>
+                    <span class="word" style="--word-index: 99; --paragraph-index: 5">child</span>
+                    <span class="word" style="--word-index: 100; --paragraph-index: 5">sat</span>
+                    <span class="word" style="--word-index: 101; --paragraph-index: 5">there,</span>
+                    <span class="word" style="--word-index: 102; --paragraph-index: 5">stiff</span>
+                    <span class="word" style="--word-index: 103; --paragraph-index: 5">and</span>
+                    <span class="word" style="--word-index: 104; --paragraph-index: 5">cold,</span>
+                    <span class="word" style="--word-index: 105; --paragraph-index: 5">holding</span>
+                    <span class="word" style="--word-index: 106; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 107; --paragraph-index: 5">matches,</span>
+                    <span class="word" style="--word-index: 108; --paragraph-index: 5">of</span>
+                    <span class="word" style="--word-index: 109; --paragraph-index: 5">which</span>
+                    <span class="word" style="--word-index: 110; --paragraph-index: 5">one</span>
+                    <span class="word" style="--word-index: 111; --paragraph-index: 5">bundle</span>
+                    <span class="word" style="--word-index: 112; --paragraph-index: 5">was</span>
+                    <span class="word" style="--word-index: 113; --paragraph-index: 5">almost</span>
+                    <span class="word" style="--word-index: 114; --paragraph-index: 5">burned.</span>
+                    <span class="word" style="--word-index: 115; --paragraph-index: 5">"She</span>
+                    <span class="word" style="--word-index: 116; --paragraph-index: 5">wanted</span>
+                    <span class="word" style="--word-index: 117; --paragraph-index: 5">to</span>
+                    <span class="word" style="--word-index: 118; --paragraph-index: 5">warm</span>
+                    <span class="word" style="--word-index: 119; --paragraph-index: 5">herself,"</span>
+                    <span class="word" style="--word-index: 120; --paragraph-index: 5">the</span>
+                    <span class="word" style="--word-index: 121; --paragraph-index: 5">people</span>
+                    <span class="word" style="--word-index: 122; --paragraph-index: 5">said.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
